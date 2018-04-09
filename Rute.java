@@ -23,52 +23,91 @@ abstract class Rute {
         return harVaert;
     }
 
+    protected void settVært() {
+        harVaert = true;
+    }
+
     private Rute finnNord() {
+        if (_rad - 1 >= 0 && _labyrint.hentRuter()[_kolonne][_rad - 1].charTilTegn() == '.') {
+            return _labyrint.hentRuter()[_kolonne][_rad - 1];
+        }
         return null;
-        //Hvis rad - 1 >=0 og (kolonne, rad-1) er åpen, returner den ruten (få fra labyrint). Ellers, returner null.
     }
 
     private Rute finnSyd() {
+        if (_rad + 1 < _labyrint.hentAntallRader() && _labyrint.hentRuter()[_kolonne][_rad + 1].charTilTegn() == '.') {
+            return _labyrint.hentRuter()[_kolonne][_rad + 1];
+        }
         return null;
-        //Hvis rad + 1 < antall rader og (kolonne, rad + 1) er åoen, returner ruten. Ellers, returner null.
     }
 
     private Rute finnOst() {
+        if (_kolonne + 1 < _labyrint.hentAntallKolonner() && _labyrint.hentRuter()[_kolonne + 1][_rad].charTilTegn() == '.') {
+            return _labyrint.hentRuter()[_kolonne + 1][_rad];
+        }
         return null;
-        //Hvis kolonne + 1 < antall kolonner og (kolonne + 1, rad) er åpen, returner ruten. Ellers, returner null.
     }
 
     private Rute finnVest() {
+        if (_kolonne - 1 >= 0 && _labyrint.hentRuter()[_kolonne - 1][_rad].charTilTegn() == '.') {
+            return _labyrint.hentRuter()[_kolonne - 1][_rad];
+        }
         return null;
-        //Hvis kolonne - 1 >=0 og (kolonne - 1, rad) er åpen, returner ruten. Ellers, returner null.
     }
 
-    public void finnNaboer() {
-        //Må kalles på etter at alle celler er lest inn og opprettet. Dette gjøres nok i Labyrint.
+    private boolean kanGaaNord(Rute rute) {
+        return rute._nord != null && rute._nord.harVaert == false; 
+    }
+
+    private boolean kanGaaSyd(Rute rute) {
+        return rute._syd != null && rute._syd.harVaert == false;
+    }
+
+    private boolean kanGaaOst(Rute rute) {
+        return rute._ost != null && rute._ost.harVaert == false;
+    }
+
+    private boolean kanGaaVest(Rute rute) {
+        return rute._vest != null && rute._vest.harVaert == false;
+    }
+
+    public void finnAapneNaboer() {
         _nord = finnNord();
         _syd = finnSyd();
         _ost = finnOst();
         _vest = finnVest();
     }
 
-    public Liste<String> gaa(int kolonne, int rad, String utvei) { //Hvilke koordinater den går FRA.
-        // "Lag en metode gaa i Rute. Denne metoden skal kalle gaa på alle naboruter unntatt den som er i den retningen kallet kom fra (for da ville vi gått tilbake til der vi nettopp var)".
+    public void gaa(int kolonne, int rad, String utvei) { //Hvilke koordinater den går FRA.
 
-        //Marker ruten harVært()
-        //Hvis ruten man står på er en åpning (har tegnet 'O', f eks), this.utveier.leggTil(utvei), return. (trenger kanskje ikke return ...)
-        //Hvis _nord ikke er null og man ikke har vært der: gaa(_nord sine koordinater)
-        //Hvis _syd ikke er null og man ikke har vært der: gaa(_syd sine koordinater)
-        //Hvis _ost ikke er null og man ikke har vært der: gaa(_ost sine koordinater)
-        //Hvis _vest ikke er null og man ikke har vært der: gaa(_vest sine koordinater)
+        Rute forrigeRute = _labyrint.hentRuter()[kolonne][rad];
+        forrigeRute.settVært();
+        utvei +=  " --> (" + forrigeRute._kolonne + ", " + forrigeRute._rad + ")";
 
-        //Hver gang man går, utvei += """-->"(kolonne, rad)"
-        return null;
+        if (forrigeRute.erAapning()) {
+            this.utveier.leggTil(utvei);
+        }
+
+        if (kanGaaNord(forrigeRute)) {
+            gaa(forrigeRute._nord._kolonne, forrigeRute._nord._rad, utvei);
+        }
+
+        if (kanGaaSyd(forrigeRute)) {
+            gaa(forrigeRute._syd._kolonne, forrigeRute._syd._rad, utvei);
+        }
+
+        if (kanGaaOst(forrigeRute)) {
+            gaa(forrigeRute._ost._kolonne, forrigeRute._ost._rad, utvei);
+        }
+
+        if (kanGaaVest(forrigeRute)) {
+            gaa(forrigeRute._vest._kolonne, forrigeRute._vest._rad, utvei);
+        }
 
     }
 
     public void finnUtvei() {
-        // "Lag så metoden  void finnUtvei() i Rute som finner alle utveier fra ruten ved hjelp av kall på gaa."
-        //gaa(this.kolonne, this.rad, "")
+        gaa(_kolonne, _rad, "");
     }
 
     public Liste<String> hentUtveier() {
@@ -76,4 +115,6 @@ abstract class Rute {
     }
 
     abstract char charTilTegn();
+
+    abstract boolean erAapning();
 }

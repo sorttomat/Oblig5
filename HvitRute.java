@@ -7,4 +7,9 @@ class HvitRute extends Rute {
     protected char charTilTegn() {
         return '.';
     }
+
+    @Override
+    protected boolean erAapning() {
+        return false;
+    }
 }

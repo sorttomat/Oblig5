@@ -7,4 +7,9 @@ class SvartRute extends Rute {
     protected char charTilTegn() {
         return '#';
     }
+
+    @Override
+    protected boolean erAapning() {
+        return false;
+    }
 }

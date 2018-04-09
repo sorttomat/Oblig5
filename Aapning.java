@@ -5,6 +5,11 @@ class Aapning extends HvitRute{
 
     @Override
     public char charTilTegn() {
-        return 'O';
+        return '.';
+    }
+
+    @Override
+    protected boolean erAapning() {
+        return true;
     }
 }

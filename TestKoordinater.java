@@ -17,8 +17,12 @@ class TestKoordinater {
             }
             System.out.println();
         }
-        File file = new File("labyrint3.txt");
-        Labyrint labyrint = new Labyrint(file);
-        //Labyrint.lesFraFil(file);
+        File file = new File("labyrint4.txt");
+        Labyrint.lesFraFil(file);
+
+        Liste<String> liste = Labyrint.finnUtveiFra(35, 72);
+        // for (String string : liste) {
+        //     System.out.println(string);
+        // }
     }
 }
