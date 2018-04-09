@@ -1,5 +1,3 @@
-
-
 abstract class Rute {
     int _kolonne;
     int _rad;
@@ -11,7 +9,7 @@ abstract class Rute {
     boolean harVaert;
     Liste<String> utveier;
 
-    protected Rute(int kolonne, int rad, Labyrint labyrint) { // naborutene med her?
+    protected Rute(int kolonne, int rad, Labyrint labyrint) { 
         _kolonne = kolonne;
         _rad = rad;
         _labyrint = labyrint;
@@ -85,6 +83,7 @@ abstract class Rute {
         utvei +=  " --> (" + forrigeRute._kolonne + ", " + forrigeRute._rad + ")";
 
         if (forrigeRute.erAapning()) {
+            System.out.println(kolonne + " " + rad); //Test
             this.utveier.leggTil(utvei);
         }
 

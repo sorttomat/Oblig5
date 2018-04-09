@@ -9,7 +9,10 @@ class Labyrint {
     private static Rute[][] _ruter;
     private Liste<String> utveier;
 
-    private Labyrint() {
+    private Labyrint(int kolonner, int rader, Rute[][] ruter) {
+        _kolonner = kolonner;
+        _rader = rader;
+        _ruter = ruter;
     }
 
     public static Labyrint lesFraFil(File fil) {
@@ -20,10 +23,7 @@ class Labyrint {
             String[] info = in.nextLine().split(" ");
             int rader = Integer.parseInt(info[0]);
             int kolonner = Integer.parseInt(info[1]);
-            Labyrint labyrint = new Labyrint();
-            _kolonner = kolonner;
-            _rader = rader;
-            _ruter = new Rute[kolonner][rader];
+            Labyrint labyrint = new Labyrint(kolonner, rader, new Rute[kolonner][rader]);
 
             for (int i = 0; i < rader; i++) {
                 String[] line = in.nextLine().split("");
