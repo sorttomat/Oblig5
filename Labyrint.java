@@ -4,10 +4,10 @@ import java.util.Scanner;
 import java.io.File;
 
 class Labyrint {
-    private static int _kolonner;
-    private static int _rader;
-    private static Rute[][] _ruter;
-    private Liste<String> utveier;
+    private int _kolonner;
+    private int _rader;
+    private Rute[][] _ruter;
+    private Liste<String> utveier = new Lenkeliste<String>();
 
     private Labyrint(int kolonner, int rader, Rute[][] ruter) {
         _kolonner = kolonner;
@@ -15,10 +15,7 @@ class Labyrint {
         _ruter = ruter;
     }
 
-    public static Labyrint lesFraFil(File fil) {
-        //Les inn filen, opprett ruter, finn alle naboer, sjekk om ruten er en åpning,  sett inn i _ruter, returner labyrint.
-        //Skal ikke håndtere FileNotFoundException, skal kaste den videre til metoden som kalte denne metoden.
-        try {
+    public static Labyrint lesFraFil(File fil) throws FileNotFoundException {
             Scanner in = new Scanner(fil);
             String[] info = in.nextLine().split(" ");
             int rader = Integer.parseInt(info[0]);
@@ -29,40 +26,38 @@ class Labyrint {
                 String[] line = in.nextLine().split("");
                 for (int j = 0; j < kolonner; j++) {
                     if (line[j].equals("#")) {
-                            _ruter[j][i] = new SvartRute(j, i, labyrint);
+                            labyrint.hentRuter()[j][i] = new SvartRute(j, i, labyrint);
                         }
                      else {
-                        if (erKant(j, i)) {
-                            _ruter[j][i] = new Aapning(j, i, labyrint);
+                        if (labyrint.erKant(j, i)) {
+                            labyrint.hentRuter()[j][i] = new Aapning(j, i, labyrint);
                         } else {
-                            _ruter[j][i] = new HvitRute(j, i, labyrint);
+                            labyrint.hentRuter()[j][i] = new HvitRute(j, i, labyrint);
                         }
                     }
                 }
             }
-            for (Rute[] ruter : _ruter) {
+            for (Rute[] ruter : labyrint.hentRuter()) {
                 for (Rute rute : ruter) {
                     rute.finnAapneNaboer();
                 }
             }
+            in.close();
             return labyrint;
-
-        } catch (FileNotFoundException ex) { //Skal kastes til metoden som kaller lesFraFil(). Vet ikke helt hvordan
-            return null;
-        }
     }
 
-    private static boolean erKant(int kolonne, int rad) {
-        if (kolonne + 1 >= _kolonner || kolonne - 1 < 0 || rad + 1 >= _rader || rad - 1 < 0) {
-            return true;
-        }
-        return false;
+    private boolean erKant(int kolonne, int rad) {
+        return kolonne + 1 >= this._kolonner || kolonne - 1 < 0 || rad + 1 >= this._rader || rad - 1 < 0;
     }
 
-    public static  Liste<String> finnUtveiFra(int kolonne, int rad) {
-        Rute rute = _ruter[kolonne][rad];
-        rute.finnUtvei();
-        return rute.hentUtveier();
+    public Liste<String> finnAlleUtveierFra(int kolonne, int rad) {
+        Rute rute = hentRuter()[kolonne][rad];
+        rute.finnUtvei();        
+        Liste<String> utveier = rute.hentUtveier();
+        for (String string : utveier) {
+            System.out.println(string);
+        }
+        return utveier;
     }
 
     public Rute[][] hentRuter() {
@@ -77,4 +72,32 @@ class Labyrint {
         return _rader;
     }
 
+    public String finnKortesteUtvei(Rute rute) {
+        String korteste;
+        if (rute.hentUtveier().stoerrelse() == 0) {
+            return "Ingen utveier";
+        }
+
+        korteste = rute.hentUtveier().hent(0);
+        for (String utvei : rute.hentUtveier()) {
+            if (antallKomma(utvei) < antallKomma(korteste)) {
+                korteste = utvei;
+            } 
+        }
+        return korteste;
+    }
+
+    private int antallKomma(String string) {
+        int antallKomma = 0;
+        for (int i = 0; i < string.length(); i++) {
+            if (string.charAt(i) == ',') {
+                antallKomma++;
+            }
+        }
+        return antallKomma;
+    }
+
+    public int hentAntallUtveier() {
+        return utveier.stoerrelse();
+    }
 }

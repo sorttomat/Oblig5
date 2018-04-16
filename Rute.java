@@ -80,12 +80,12 @@ abstract class Rute {
 
         Rute forrigeRute = _labyrint.hentRuter()[kolonne][rad];
         forrigeRute.settVært();
-        utvei +=  " --> (" + forrigeRute._kolonne + ", " + forrigeRute._rad + ")";
 
         if (forrigeRute.erAapning()) {
-            System.out.println(kolonne + " " + rad); //Test
+            utvei +=  "(" + forrigeRute._kolonne + ", " + forrigeRute._rad + ")";
             this.utveier.leggTil(utvei);
         }
+        utvei +=  "(" + forrigeRute._kolonne + ", " + forrigeRute._rad + ") --> ";
 
         if (kanGaaNord(forrigeRute)) {
             gaa(forrigeRute._nord._kolonne, forrigeRute._nord._rad, utvei);
