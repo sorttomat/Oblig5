@@ -9,6 +9,8 @@ class TestKoordinater {
             Liste<String> alleUtveier = labyrint.finnAlleUtveierFra(5, 11);    
             Liste<String> utveier = labyrint.finnAlleUtveierFra(11, 11);
 
+
+            
             } catch(FileNotFoundException ex) {
         }
     }
