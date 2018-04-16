@@ -7,7 +7,6 @@ class Labyrint {
     private int _kolonner;
     private int _rader;
     private Rute[][] _ruter;
-    private Liste<String> utveier = new Lenkeliste<String>();
 
     private Labyrint(int kolonner, int rader, Rute[][] ruter) {
         _kolonner = kolonner;
@@ -52,11 +51,9 @@ class Labyrint {
 
     public Liste<String> finnAlleUtveierFra(int kolonne, int rad) {
         Rute rute = hentRuter()[kolonne][rad];
-        rute.finnUtvei();        
+        rute.finnUtvei();     
         Liste<String> utveier = rute.hentUtveier();
-        for (String string : utveier) {
-            System.out.println(string);
-        }
+        tilbakestillRuter();
         return utveier;
     }
 
@@ -97,7 +94,11 @@ class Labyrint {
         return antallKomma;
     }
 
-    public int hentAntallUtveier() {
-        return utveier.stoerrelse();
+    private void tilbakestillRuter() {
+        for (Rute[] ruter : this.hentRuter()) {
+            for (Rute r : ruter) {
+                r.settBlank();
+            }
+        }
     }
 }

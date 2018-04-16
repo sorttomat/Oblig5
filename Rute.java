@@ -113,6 +113,10 @@ abstract class Rute {
         return utveier;
     }
 
+    public void settBlank() {
+        harVaert = false;
+    }
+
     abstract char charTilTegn();
 
     abstract boolean erAapning();
