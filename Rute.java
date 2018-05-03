@@ -1,4 +1,6 @@
-abstract class Rute {
+import javafx.scene.control.Button; 
+
+abstract class Rute extends Button {
     int _kolonne;
     int _rad;
     Labyrint _labyrint;
@@ -15,6 +17,14 @@ abstract class Rute {
         _labyrint = labyrint;
         harVaert = false;
         utveier = new Lenkeliste<String>();
+    }
+
+    public int hentKolonne() {
+        return _kolonne;
+    }
+
+    public int hentRad() {
+        return _rad;
     }
 
     protected boolean harVaert() {
