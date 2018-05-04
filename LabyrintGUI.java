@@ -14,9 +14,56 @@ import java.io.FileNotFoundException;
 import java.util.Random;
 
 class LabyrintGUI extends Application {
-    String filnavn = "some string";
+    String filnavn = "labyrint3.txt";
     Labyrint labyrint = fraFil(filnavn);
     Text statusinfo;
+
+    public static void main(String[] args) {
+        Application.launch(args);
+    }
+
+    @Override
+    public void start(Stage teater) {
+        statusinfo = new Text("Velg en rute");
+        statusinfo.setFont(new Font(20));
+        statusinfo.setX(10);
+        statusinfo.setY(410);
+
+        Button stoppknapp = new Button("Stopp");
+        stoppknapp.setLayoutX(10);
+        stoppknapp.setLayoutY(410);
+        StoppBehandler stopp = new StoppBehandler();
+        stoppknapp.setOnAction(stopp);
+
+        Rute[][] brett = labyrint.hentRuter();
+        TrykkRuteBehandler trykkRute = new TrykkRuteBehandler();
+        for (Rute[] rad : brett) {
+            for (Rute rute : rad) {
+                rute.setOnAction(trykkRute);
+            }
+        }
+
+        GridPane rutenett = new GridPane();
+        for (int i = 0; i < labyrint.hentAntallRader(); i++) {
+            for (int j = 0; j < labyrint.hentAntallKolonner(); j++) {
+                rutenett.add(brett[j][i], j, i);
+            }
+        }
+        rutenett.setLayoutX(10);
+        rutenett.setLayoutY(10);
+
+        Pane kulisser = new Pane();
+        kulisser.setPrefSize(400, 500);
+        kulisser.getChildren().add(rutenett);
+        kulisser.getChildren().add(statusinfo);
+        kulisser.getChildren().add(stoppknapp);
+
+        Scene scene = new Scene(kulisser);
+
+        teater.setTitle("Spill");
+        teater.setScene(scene);
+        teater.show();
+    }
 
     private Labyrint fraFil(String filnavn) {
         try {
@@ -28,10 +75,17 @@ class LabyrintGUI extends Application {
         } 
     }
 
-    class Trykkbehandler implements EventHandler<ActionEvent> {
+    class TrykkRuteBehandler implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent e) {
             trykkPaaRute((Rute) e.getSource());
+        }
+    }
+
+    class StoppBehandler implements EventHandler<ActionEvent> {
+        @Override
+        public void handle(ActionEvent e) {
+            Platform.exit();
         }
     }
 
@@ -49,6 +103,7 @@ class LabyrintGUI extends Application {
         for(String utvei : utveier) {
             boolean[][] løsning = new boolean[labyrint.hentAntallRader()][labyrint.hentAntallKolonner()];
             listeMedUtveierBoolean.leggTil(løsning);
+            System.out.println(utvei);
         }
 
         // Deretter skal et nytt vindu dukke opp der alle løsningene vises.
@@ -76,10 +131,5 @@ class LabyrintGUI extends Application {
             losning[y][x] = true;
         }
         return losning;
-    }
-
-    @Override
-    public void start(Stage scene) {
-
     }
 }
