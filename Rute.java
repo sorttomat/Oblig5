@@ -11,7 +11,7 @@ abstract class Rute extends Button {
     boolean harVaert;
     Liste<String> utveier;
 
-    protected Rute(int kolonne, int rad, Labyrint labyrint) { 
+    protected Rute(int kolonne, int rad, Labyrint labyrint) {
         _kolonne = kolonne;
         _rad = rad;
         _labyrint = labyrint;
