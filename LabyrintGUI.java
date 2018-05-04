@@ -8,13 +8,13 @@ import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.event.*;
-
+import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Random;
 
 public class LabyrintGUI extends Application {
-    String filnavn = "labyrint3.txt";
+    File fil;
     Labyrint labyrint;
     Text statusinfo;
     GridPane rutenett;
@@ -28,11 +28,17 @@ public class LabyrintGUI extends Application {
 
     @Override
     public void start(Stage teater) {
-        labyrint = fraFil(filnavn);
+        try {
+            FileChooser filvelger = new FileChooser();
+            fil = filvelger.showOpenDialog(null);
+            labyrint = Labyrint.lesFraFil(fil);  
+        } catch (FileNotFoundException ex) {
+        }
+
         statusinfo = new Text("Velg en rute");
         statusinfo.setFont(new Font(20));
         statusinfo.setX(10);
-        statusinfo.setY(410);
+        statusinfo.setY(390);
 
         Button stoppknapp = new Button("Stopp");
         stoppknapp.setLayoutX(10);
@@ -85,7 +91,7 @@ public class LabyrintGUI extends Application {
 
         Scene scene = new Scene(kulisser);
 
-        teater.setTitle("Spill");
+        teater.setTitle("Christines fantastiske labyrintspill!");
         teater.setScene(scene);
         teater.show();
     }
@@ -104,7 +110,7 @@ public class LabyrintGUI extends Application {
             return;
         }
         for(String utvei : utveier) {
-            boolean[][] løsning = losningStringTilTabell(utvei, labyrint.hentAntallKolonner(), labyrint.hentAntallRader());
+            boolean[][] løsning = losningStringTilTabell(utvei, labyrint.hentAntallRader(), labyrint.hentAntallKolonner());
             listeMedUtveierBoolean.leggTil(løsning);
         }
         printLosningNr();
@@ -138,9 +144,7 @@ public class LabyrintGUI extends Application {
     private void fargeleggUtvei(boolean[][] løsning) {
         for (int i = 0; i < labyrint.hentAntallRader(); i++) {
             for (int j = 0; j < labyrint.hentAntallKolonner(); j++) {
-                System.out.println(løsning[j][i]);
                 if (løsning[j][i] == true) {
-                    System.out.println("sant");
                     brett[j][i].setStyle("-fx-base: #f40606;");
                 }
             }
