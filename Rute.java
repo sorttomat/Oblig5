@@ -8,15 +8,15 @@ abstract class Rute extends Button {
     Rute _syd;
     Rute _ost;
     Rute _vest;
-    boolean harVaert;
-    Liste<String> utveier;
+    boolean _harVaert;
+    Liste<String> _utveier;
 
     protected Rute(int kolonne, int rad, Labyrint labyrint) {
         _kolonne = kolonne;
         _rad = rad;
         _labyrint = labyrint;
-        harVaert = false;
-        utveier = new Lenkeliste<String>();
+        _harVaert = false;
+        _utveier = null;
     }
 
     public int hentKolonne() {
@@ -28,11 +28,11 @@ abstract class Rute extends Button {
     }
 
     protected boolean harVaert() {
-        return harVaert;
+        return _harVaert;
     }
 
     protected void settVært() {
-        harVaert = true;
+        _harVaert = true;
     }
 
     private Rute finnNord() {
@@ -64,19 +64,19 @@ abstract class Rute extends Button {
     }
 
     private boolean kanGaaNord(Rute rute) {
-        return rute._nord != null && rute._nord.harVaert == false; 
+        return rute._nord != null && rute._nord._harVaert == false; 
     }
 
     private boolean kanGaaSyd(Rute rute) {
-        return rute._syd != null && rute._syd.harVaert == false;
+        return rute._syd != null && rute._syd._harVaert == false;
     }
 
     private boolean kanGaaOst(Rute rute) {
-        return rute._ost != null && rute._ost.harVaert == false;
+        return rute._ost != null && rute._ost._harVaert == false;
     }
 
     private boolean kanGaaVest(Rute rute) {
-        return rute._vest != null && rute._vest.harVaert == false;
+        return rute._vest != null && rute._vest._harVaert == false;
     }
 
     public void finnAapneNaboer() {
@@ -93,7 +93,7 @@ abstract class Rute extends Button {
 
         if (forrigeRute.erAapning()) {
             utvei +=  "(" + forrigeRute._kolonne + ", " + forrigeRute._rad + ")";
-            this.utveier.leggTil(utvei);
+            _utveier.leggTil(utvei);
         }
         utvei +=  "(" + forrigeRute._kolonne + ", " + forrigeRute._rad + ") --> ";
 
@@ -116,15 +116,18 @@ abstract class Rute extends Button {
     }
 
     public void finnUtvei() {
-        gaa(_kolonne, _rad, "");
+        if (_utveier == null) {
+            _utveier = new Lenkeliste<String>();
+            gaa(_kolonne, _rad, "");
+        }
     }
 
     public Liste<String> hentUtveier() {
-        return utveier;
+        return _utveier;
     }
 
     public void settBlank() {
-        harVaert = false;
+        _harVaert = false;
     }
 
     abstract char charTilTegn();

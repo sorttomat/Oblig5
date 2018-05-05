@@ -21,13 +21,15 @@ class Labyrint {
             int kolonner = Integer.parseInt(info[1]);
             Labyrint labyrint = new Labyrint(kolonner, rader, new Rute[kolonner][rader]);
 
+
             for (int i = 0; i < rader; i++) {
                 String[] line = in.nextLine().split("");
                 for (int j = 0; j < kolonner; j++) {
                     if (line[j].equals("#")) {
-                            labyrint.hentRuter()[j][i] = new SvartRute(j, i, labyrint);
-                        }
-                     else {
+                        labyrint.hentRuter()[j][i] = new SvartRute(j, i, labyrint);
+                        //labyrint.setRute(x, y, nyVerdi);
+                    }
+                    else {
                         if (labyrint.erKant(j, i)) {
                             labyrint.hentRuter()[j][i] = new Aapning(j, i, labyrint);
                         } else {
@@ -53,6 +55,7 @@ class Labyrint {
         Rute rute = hentRuter()[kolonne][rad];
         rute.finnUtvei();     
         Liste<String> utveier = rute.hentUtveier();
+        System.out.println(utveier.stoerrelse());
         tilbakestillRuter();
         return utveier;
     }
@@ -67,31 +70,6 @@ class Labyrint {
 
     public int hentAntallRader() {
         return _rader;
-    }
-
-    public String finnKortesteUtvei(Rute rute) {
-        String korteste;
-        if (rute.hentUtveier().stoerrelse() == 0) {
-            return "Ingen utveier";
-        }
-
-        korteste = rute.hentUtveier().hent(0);
-        for (String utvei : rute.hentUtveier()) {
-            if (antallKomma(utvei) < antallKomma(korteste)) {
-                korteste = utvei;
-            } 
-        }
-        return korteste;
-    }
-
-    private int antallKomma(String string) {
-        int antallKomma = 0;
-        for (int i = 0; i < string.length(); i++) {
-            if (string.charAt(i) == ',') {
-                antallKomma++;
-            }
-        }
-        return antallKomma;
     }
 
     private void tilbakestillRuter() {

@@ -51,12 +51,14 @@ public class LabyrintGUI extends Application {
         forrigeKnapp.setLayoutY(440);
         TrykkForrigeBehandler forrige = new TrykkForrigeBehandler();
         forrigeKnapp.setOnAction(forrige);
+        forrigeKnapp.setDisable(true);
 
         Button nesteKnapp = new Button("Neste løsning");
         nesteKnapp.setLayoutX(150);
         nesteKnapp.setLayoutY(440);
         TrykkNesteBehandler neste = new TrykkNesteBehandler();
         nesteKnapp.setOnAction(neste);
+        nesteKnapp.setDisable(true);
 
         brett = labyrint.hentRuter();
         TrykkRuteBehandler trykkRute = new TrykkRuteBehandler();
@@ -80,6 +82,7 @@ public class LabyrintGUI extends Application {
         }
         rutenett.setLayoutX(10);
         rutenett.setLayoutY(10);
+        rutenett.setStyle("-fx-base: #000000;");
 
         Pane kulisser = new Pane();
         kulisser.setPrefSize(400, 500);
@@ -96,13 +99,14 @@ public class LabyrintGUI extends Application {
         teater.show();
     }
 
-    private void trykkPaaRute(Rute rute) {
+    private void trykkPaaRute(Rute rute) { //TODO: disable/enable knapper i metode sammen med printLosningNr og fargeleggUtvei.
         losningTeller = 0;
         nullstillBrett();
         if (rute.charTilTegn() != '.') {
             statusinfo.setText("Dette er en lukket rute, vennligst velg en aapen.");
             return;
         }
+
         Liste<String> utveier = labyrint.finnAlleUtveierFra(rute.hentKolonne(), rute.hentRad());
         listeMedUtveierBoolean = new Lenkeliste<boolean[][]>();
         if (utveier.stoerrelse() == 0) {
