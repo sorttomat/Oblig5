@@ -8,10 +8,13 @@ import javafx.scene.control.Button;
 import javafx.scene.text.Text;
 import javafx.scene.text.Font;
 import javafx.event.*;
+import javafx.geometry.Rectangle2D;
 import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Random;
+
+import javafx.scene.shape.*;
 
 public class LabyrintGUI extends Application {
     File fil;
@@ -21,6 +24,8 @@ public class LabyrintGUI extends Application {
     Rute[][] brett;
     int losningTeller;
     Lenkeliste<boolean[][]> listeMedUtveierBoolean;
+    Button forrigeKnapp;
+    Button nesteKnapp;
 
     public static void main(String[] args) {
         launch();
@@ -37,52 +42,55 @@ public class LabyrintGUI extends Application {
 
         statusinfo = new Text("Velg en rute");
         statusinfo.setFont(new Font(20));
-        statusinfo.setX(10);
-        statusinfo.setY(390);
+        statusinfo.setX(130);
+        statusinfo.setY(430);
 
         Button stoppknapp = new Button("Stopp");
         stoppknapp.setLayoutX(10);
-        stoppknapp.setLayoutY(410);
+        stoppknapp.setLayoutY(460);
         StoppBehandler stopp = new StoppBehandler();
         stoppknapp.setOnAction(stopp);
 
-        Button forrigeKnapp = new Button("Forrige løsning");
+        forrigeKnapp = new Button("Forrige løsning");
         forrigeKnapp.setLayoutX(10);
-        forrigeKnapp.setLayoutY(440);
+        forrigeKnapp.setLayoutY(430);
         TrykkForrigeBehandler forrige = new TrykkForrigeBehandler();
         forrigeKnapp.setOnAction(forrige);
         forrigeKnapp.setDisable(true);
 
-        Button nesteKnapp = new Button("Neste løsning");
-        nesteKnapp.setLayoutX(150);
-        nesteKnapp.setLayoutY(440);
+        nesteKnapp = new Button("Neste løsning");
+        nesteKnapp.setLayoutX(300);
+        nesteKnapp.setLayoutY(430);
         TrykkNesteBehandler neste = new TrykkNesteBehandler();
         nesteKnapp.setOnAction(neste);
         nesteKnapp.setDisable(true);
 
         brett = labyrint.hentRuter();
         TrykkRuteBehandler trykkRute = new TrykkRuteBehandler();
-        for (Rute[] rad : brett) {
-            for (Rute rute : rad) {
-                if (rute.charTilTegn() == '.') {
-                    rute.setStyle("-fx-base: #ffffff;");
-                }
-                else {
-                    rute.setStyle("-fx-base: #000000;");
-                }
-                rute.setOnAction(trykkRute);
-            }
-        }
 
         rutenett = new GridPane();
         for (int i = 0; i < labyrint.hentAntallRader(); i++) {
             for (int j = 0; j < labyrint.hentAntallKolonner(); j++) {
-                rutenett.add(brett[j][i], j, i);
+                Rute rute = brett[j][i];
+                if (rute.charTilTegn() == '.') {
+                    rute.setStyle("-fx-base: #ffffff;");
+                    rute.setOnAction(trykkRute);
+                    rute.setPrefWidth(30);
+                    rute.setPrefHeight(30);
+                    rutenett.add(rute, j, i);
+                }
+                else {
+                    Rectangle rec = new Rectangle();
+                    rec.setWidth(30);
+                    rec.setHeight(30);
+                    rutenett.add(rec, j, i);
+                }
             }
         }
+
         rutenett.setLayoutX(10);
         rutenett.setLayoutY(10);
-        rutenett.setStyle("-fx-base: #000000;");
+        rutenett.setStyle("-fx-background-color: #000000;");
 
         Pane kulisser = new Pane();
         kulisser.setPrefSize(400, 500);
@@ -99,13 +107,9 @@ public class LabyrintGUI extends Application {
         teater.show();
     }
 
-    private void trykkPaaRute(Rute rute) { //TODO: disable/enable knapper i metode sammen med printLosningNr og fargeleggUtvei.
+    private void trykkPaaRute(Rute rute) { // TODO: disable/enable knapper i metode sammen med printLosningNr og                                          // fargeleggUtvei.
         losningTeller = 0;
         nullstillBrett();
-        if (rute.charTilTegn() != '.') {
-            statusinfo.setText("Dette er en lukket rute, vennligst velg en aapen.");
-            return;
-        }
 
         Liste<String> utveier = labyrint.finnAlleUtveierFra(rute.hentKolonne(), rute.hentRad());
         listeMedUtveierBoolean = new Lenkeliste<boolean[][]>();
@@ -113,23 +117,36 @@ public class LabyrintGUI extends Application {
             statusinfo.setText("Ingen utveier");
             return;
         }
-        for(String utvei : utveier) {
-            boolean[][] løsning = losningStringTilTabell(utvei, labyrint.hentAntallRader(), labyrint.hentAntallKolonner());
+        for (String utvei : utveier) {
+            boolean[][] løsning = losningStringTilTabell(utvei, labyrint.hentAntallRader(),
+                    labyrint.hentAntallKolonner());
             listeMedUtveierBoolean.leggTil(løsning);
         }
+        oppdaterTeater();
+    }
+
+    private void oppdaterTeater() {
         printLosningNr();
-        fargeleggUtvei(listeMedUtveierBoolean.hent(0));
+        fargeleggUtvei(listeMedUtveierBoolean.hent(losningTeller));
+        if (losningTeller < listeMedUtveierBoolean.stoerrelse() - 1) {
+            nesteKnapp.setDisable(false);
+        }
+        if (losningTeller == (listeMedUtveierBoolean.stoerrelse() - 1)) {
+            nesteKnapp.setDisable(true);
+        }
+        if (losningTeller > 0) {
+            forrigeKnapp.setDisable(false);
+        }
+        if (losningTeller == 0) {
+            forrigeKnapp.setDisable(true);
+        }
     }
 
     private void trykkNeste() {
-        if (losningTeller < listeMedUtveierBoolean.stoerrelse()-1) {
+        if (losningTeller < listeMedUtveierBoolean.stoerrelse() - 1) {
             nullstillBrett();
             losningTeller++;
-            printLosningNr();
-            fargeleggUtvei(listeMedUtveierBoolean.hent(losningTeller));
-        }
-        else {
-            statusinfo.setText("Ingen flere løsninger");
+            oppdaterTeater();
         }
     }
 
@@ -137,11 +154,7 @@ public class LabyrintGUI extends Application {
         if (losningTeller > 0) {
             nullstillBrett();
             losningTeller--;
-            printLosningNr();
-            fargeleggUtvei(listeMedUtveierBoolean.hent(losningTeller));
-        }
-        else {
-            statusinfo.setText("Ingen flere løsninger");
+            oppdaterTeater();
         }
     }
 
@@ -158,25 +171,25 @@ public class LabyrintGUI extends Application {
     private Labyrint fraFil(String filnavn) {
         try {
             File fil = new File(filnavn);
-            Labyrint labyrint = Labyrint.lesFraFil(fil); 
-            return labyrint;     
+            Labyrint labyrint = Labyrint.lesFraFil(fil);
+            return labyrint;
         } catch (FileNotFoundException ex) {
             return null;
-        } 
+        }
     }
 
     private void nullstillBrett() {
+        nesteKnapp.setDisable(true);
+        forrigeKnapp.setDisable(true);
         for (Rute[] rad : brett) {
             for (Rute rute : rad) {
                 if (rute.charTilTegn() == '.') {
                     rute.setStyle("-fx-base: #ffffff;");
                 }
-                else {
-                    rute.setStyle("-fx-base: #000000;");
-                }
             }
         }
     }
+
     private void printLosningNr() {
         statusinfo.setText("Viser løsning nr: " + (losningTeller + 1));
     }

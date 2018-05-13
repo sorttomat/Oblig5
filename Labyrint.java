@@ -55,7 +55,6 @@ class Labyrint {
         Rute rute = hentRuter()[kolonne][rad];
         rute.finnUtvei();     
         Liste<String> utveier = rute.hentUtveier();
-        System.out.println(utveier.stoerrelse());
         tilbakestillRuter();
         return utveier;
     }
